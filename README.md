@@ -21,7 +21,7 @@ requirements.txt
 
 2.	Tag the price a different stage every day and every period. It use from 0 to 7 in this data, 0 means the lowest price and 7 means the highest price ever appears in that period. In other words, the stage depends on the data in which period.
 
-3. Train data with LSTM model to predict the stage.
+3.  Train data with LSTM model to predict the stage.
 
 4.	The action generate depends on stage level. If stage < 3 then will buy else if stage > 4 then will sell.
 

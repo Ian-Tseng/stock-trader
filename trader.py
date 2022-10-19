@@ -24,6 +24,7 @@ import datetime
 import csv
 import ast
 import random
+import math
 import numpy as np
 import tensorflow as tf
 #import matplotlib.pyplot as plt
@@ -155,7 +156,7 @@ def init_training(agent_name, stock_id, refresh_input_data, session_list, total_
     num_of_layers= num_of_layers
     train_times_count= 0
     callback_stop_count= 0
-    callback_stop_val= 7
+    callback_stop_val= 5
     best_result_count_2_callback_stop_val= 5
     predict_data_list= None
 
@@ -413,7 +414,7 @@ def get_cross_train_rule_data_and_validation_data(dir):
       
             for num in range(num_of_val_data):
                     rand_sel= random.choice(total_data_list_copy)
-                    total_data_list_copy.remove(rand_sel)  
+                    #total_data_list_copy.remove(rand_sel)  
 
                     validation_data_list.append(rand_sel)
             train_rule_data_list= total_data_list_copy
@@ -445,6 +446,14 @@ def get_predict_next_day_data(dir):
       
     return data_list
 
+def inpu_data_feature_to_binary(data_list):
+    for data in data_list:
+         if data_list< 0:
+            data_list= 0
+         else:
+            data_list= 1
+    return data_list
+
 
 def get_input_data_for_other_input(agent_name, train_data_list, validation_data_list, total_data_list, predict_data_list):
     train_input_data_list= [] 
@@ -458,7 +467,7 @@ def get_input_data_for_other_input(agent_name, train_data_list, validation_data_
     plus_representation_coding= 1
     substraction_representation_coding= 0
     total_date_data= [i[0] for i in total_data_list]
-    data_range= 7
+    data_range= 9
     stock_id= '0050'
     for train_data in train_data_list[data_range:]:
         if agent_name== 'agent_phase':               # Agent phase train data
@@ -469,25 +478,36 @@ def get_input_data_for_other_input(agent_name, train_data_list, validation_data_
             for target_data in target_data_range:
                 if len(target_data)< 10:
                      continue
-                oepn_price= target_data[8]     # Open price level
+                
+                oepn_price= target_data[8]     # Open price level              
                 oepn_price_list= ast.literal_eval(oepn_price)
 
                 
-                highest_price= target_data[9] # Highest price level
+                highest_price= target_data[9] # Highest price level             
                 highest_price_list= ast.literal_eval(highest_price)
 
 
-                lowest_price= target_data[10]            # Lowest price level
+                lowest_price= target_data[10]            # Lowest price level              
                 lowest_price_list= ast.literal_eval(lowest_price)
                    
-                close_price= target_data[11]           # Close price level
+                close_price= target_data[11]           # Close price level           
                 close_price_list= ast.literal_eval(close_price)
 
+                
 
                 delta= [float(target_data[7])]  # Delta level
-                  
-               # feature_list= [0]+ oepn_price_list+ [1]+ highest_price_list+ [2]+ lowest_price_list+ [3]+ close_price_list      
-                feature_list= [0]+ oepn_price_list#+ [1]+ close_price_list 
+
+               # oepn_price_list= inpu_data_feature_to_binary(oepn_price_list)
+               # highest_price_list= inpu_data_feature_to_binary(highest_price_list)
+               # lowest_price_list= inpu_data_feature_to_binary(lowest_price_list)
+               # close_price_list= inpu_data_feature_to_binary(close_price_list)
+               
+
+                #feature_list= [0]+ oepn_price_list+ [1]+ highest_price_list+ [2]+ lowest_price_list+ [3]+ close_price_list      
+                feature_list= oepn_price_list+ highest_price_list+ lowest_price_list+ close_price_list
+                feature_list= [1, 0, 0 ,0 ]+ oepn_price_list+ [0, 1, 0 ,0 ]+ highest_price_list+ [0, 0, 1 ,0 ]+ lowest_price_list+ [0, 0, 0 ,1 ]+ close_price_list
+
+               # feature_list= [0]+ oepn_price_list#+ [1]+ close_price_list 
                 data_in_day_level.append(feature_list)
             train_input_data_list.append(data_in_day_level)
             train_input_data_index_list.append([stock_id, train_data[0]])
@@ -502,25 +522,34 @@ def get_input_data_for_other_input(agent_name, train_data_list, validation_data_
             for target_data in target_data_range:
                 if len(target_data)< 10:
                      continue
-                oepn_price= target_data[8]     # Open price level
+
+                oepn_price= target_data[8]     # Open price level              
                 oepn_price_list= ast.literal_eval(oepn_price)
 
                 
-                highest_price= target_data[9] # Highest price level
+                highest_price= target_data[9] # Highest price level             
                 highest_price_list= ast.literal_eval(highest_price)
 
 
-                lowest_price= target_data[10]            # Lowest price level
+                lowest_price= target_data[10]            # Lowest price level              
                 lowest_price_list= ast.literal_eval(lowest_price)
                    
-                close_price= target_data[11]           # Close price level
+                close_price= target_data[11]           # Close price level           
                 close_price_list= ast.literal_eval(close_price)
 
 
+
                 delta= [float(target_data[7])]  # Delta level
+
+               # oepn_price_list= inpu_data_feature_to_binary(oepn_price_list)
+               # highest_price_list= inpu_data_feature_to_binary(highest_price_list)
+               # lowest_price_list= inpu_data_feature_to_binary(lowest_price_list)
+               # close_price_list= inpu_data_feature_to_binary(close_price_list)
                            
-              #  feature_list= [0]+ oepn_price_list+ [1]+ highest_price_list+ [2]+ lowest_price_list+ [3]+ close_price_list     
-                feature_list= [0]+ oepn_price_list#+ [1]+ close_price_list 
+               # feature_list= [0]+ oepn_price_list+ [1]+ highest_price_list+ [2]+ lowest_price_list+ [3]+ close_price_list   
+              #  feature_list= oepn_price_list+ highest_price_list+ lowest_price_list+ close_price_list      
+                feature_list= [1, 0, 0 ,0 ]+ oepn_price_list+ [0, 1, 0 ,0 ]+ highest_price_list+ [0, 0, 1 ,0 ]+ lowest_price_list+ [0, 0, 0 ,1 ]+ close_price_list
+              #  feature_list= [0]+ oepn_price_list#+ [1]+ close_price_list 
                 data_in_day_level.append(feature_list)
             validation_input_data_list.append(data_in_day_level)
             validation_input_data_index_list.append([stock_id, validation_data[0]])
@@ -537,25 +566,33 @@ def get_input_data_for_other_input(agent_name, train_data_list, validation_data_
         for target_data in predict_next_date_data_range:
                 if len(target_data)< 10:
                      continue
-                oepn_price= target_data[8]     # Open price level
+                oepn_price= target_data[8]     # Open price level              
                 oepn_price_list= ast.literal_eval(oepn_price)
 
                 
-                highest_price= target_data[9] # Highest price level
+                highest_price= target_data[9] # Highest price level             
                 highest_price_list= ast.literal_eval(highest_price)
 
 
-                lowest_price= target_data[10]            # Lowest price level
+                lowest_price= target_data[10]            # Lowest price level              
                 lowest_price_list= ast.literal_eval(lowest_price)
                    
-                close_price= target_data[11]           # Close price level
+                close_price= target_data[11]           # Close price level           
                 close_price_list= ast.literal_eval(close_price)
 
 
+
                 delta= [float(target_data[7])]  # Delta level
+
+               # oepn_price_list= inpu_data_feature_to_binary(oepn_price_list)
+               # highest_price_list= inpu_data_feature_to_binary(highest_price_list)
+               # lowest_price_list= inpu_data_feature_to_binary(lowest_price_list)
+               # close_price_list= inpu_data_feature_to_binary(close_price_list)
                            
-               # feature_list= [0]+ oepn_price_list+ [1]+ highest_price_list+ [2]+ lowest_price_list+ [3]+ close_price_list      
-                feature_list= [0]+ oepn_price_list#+ [1]+ close_price_list 
+               # feature_list= [0]+ oepn_price_list+ [1]+ highest_price_list+ [2]+ lowest_price_list+ [3]+ close_price_list   
+              #  feature_list= oepn_price_list+ highest_price_list+ lowest_price_list+ close_price_list      
+                feature_list= [1, 0, 0 ,0 ]+ oepn_price_list+ [0, 1, 0 ,0 ]+ highest_price_list+ [0, 0, 1 ,0 ]+ lowest_price_list+ [0, 0, 0 ,1 ]+ close_price_list
+              #  feature_list= [0]+ oepn_price_list#+ [1]+ close_price_list 
                 data_in_day_level.append(feature_list)
 
         predict_next_day_input_data_list.append(data_in_day_level)
@@ -1397,7 +1434,7 @@ def get_all_periods_data_to_previous_data_level_with_different_columns(data_list
     
     
     # Target data range
-    m_range= 10
+    m_range=   10
     week_range= 7
     
     max_range_len= max(m_range, week_range)
@@ -1432,6 +1469,8 @@ def get_all_periods_data_to_previous_data_level_with_different_columns(data_list
                 
                 data_to_previous_data= ((np.array(target_column)- np.array(target_data))/ specific_phase_round_data_sd).tolist()
              
+                   
+
                # print ('data_to_previous_data shape', np.array(data_to_previous_data).shape)
                 
                 data.append(data_to_previous_data)
@@ -1441,6 +1480,12 @@ def get_all_periods_data_to_previous_data_level_with_different_columns(data_list
    
             
     return all_phase_round_range, max_range_len
+
+def sigmoid(val):
+    output= 1/(1+ (math.exp(1)** -val))
+    if np.isnan(output):
+        output= 0
+    return output
 
 
 
@@ -1452,9 +1497,8 @@ def get_period_data_to_previous_data_level_with_different_columns(data_list, all
     
     
     # Target data range
-    m_range= 10
+    m_range= 10 
     week_range= 7
-    day_range= 7
     
     phase_round_range_index='n'
    
@@ -1471,7 +1515,6 @@ def get_period_data_to_previous_data_level_with_different_columns(data_list, all
                 else:
                     target_m_range_begin= len(target_column)- m_range
                 target_column=  target_column[target_m_range_begin:]+ target_column[target_week_range_begin:]   # Select range
-               
                 
                 specific_phase_round_data_mean= statistics.mean(target_column)
               #  specific_phase_round_data_min= min(target_column)
@@ -1482,7 +1525,7 @@ def get_period_data_to_previous_data_level_with_different_columns(data_list, all
              
                     
                 data_to_previous_data= ((np.array(target_column)- np.array(target_data))/ specific_phase_round_data_sd).tolist()
-               
+            
                 
                 data.append(data_to_previous_data)
         data.append(phase_round_range_index)
@@ -1574,24 +1617,36 @@ def save_train_data(dir, data_list):
         writer = csv.writer(csvfile)
         for data in data_list:
             writer.writerow(data)
+
+def check_current_to_last_price(current_price, last_price):
+    output= 0
+    if current_price> last_price:
+        output= 1
+
+    return output
             
-def get_action(test_data_index, predict_stage, action_history, current_holding):
+def get_action(data, test_data_index, predict_stage, action_history, price_history, current_holding):
     action= 0
-  
+    
     if predict_stage< 3 and current_holding== 0:
         action= 1
     elif predict_stage> 4 and current_holding== 1:
+       # check_output= check_current_to_last_price(data[1], price_history[-1])
+       # if check_output== 1:
         action= -1
-        
+       # else:
+       #     action= 0   
         
     if action== 1:
         current_holding= 1
-    elif action== -1:
+        price_history.append(data[1])
+    if action== -1:
         current_holding= 0
         
     action_history.append(action)
     
-    return action, action_history, current_holding
+    
+    return action, action_history, price_history, current_holding
 
 def save_action_output(data_list, action_output_dir):
    
@@ -1606,6 +1661,7 @@ def agent_action(test_data_dir, action_output_dir):
     
     data_list= get_outline_history_data_for_test(test_data_dir)
     action_history=[]
+    price_history= []
     current_holding= 0
     for count, i in enumerate(data_list):
        # gc.enable()
@@ -1619,7 +1675,7 @@ def agent_action(test_data_dir, action_output_dir):
         preprocess_for_test_data(test_data_dir, i)
         predict_value= set_and_init_predict()
         print (i)
-        action, action_history, current_holding= get_action(count, predict_value, action_history, current_holding)
+        action, action_history, price_history, current_holding= get_action(i, count, predict_value, action_history, price_history, current_holding)
         print ('action', action, 'action_history', action_history, 'current_holding', current_holding)
     print (len(action_history))
     save_action_output(action_history, action_output_dir)

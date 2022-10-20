@@ -21,7 +21,7 @@ python trader.py --training training_data.csv --testing testing_data.csv
 
 ### Idea 
 ```
-1.  Find the price delta in a season if it greater than whole data’s price delta and split them into different life period.
+1.  Find the price delta in a season if it greater than whole data’s price delta and split them into different life periods.
 
 2.  Tag the price a different stage every day and every period. It use from 0 to 7 in this data, 0 means the lowest price and 7 means the highest price ever appears in that period. In other words, the stage depends on the data in which period.
 

@@ -11,8 +11,12 @@ requirements.txt
 ```
 
 ### Start Virtual Environment
-```conda environment
 ```
+conda environment
+pip install requirements.txt
+python trader.py --training training_data.csv --testing testing_data.csv
+```
+
 
 
 ### Idea 

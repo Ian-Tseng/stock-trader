@@ -1,6 +1,5 @@
-# Trader
+# Stock Trader
 
-DSAI 2022 HW1
 
 ## Prerequisite
 - Python 3.10
@@ -20,13 +19,23 @@ python trader.py --training training_data.csv --testing testing_data.csv
 
 ### Idea 
 ```
-1.  Find the price delta in a season if it greater than whole data’s price delta and split them into different life periods.
+Identify seasonal price deltas that are greater than the overall dataset’s price delta, and split the data into different life periods accordingly.
 
-2.  Tag the price a different stage every day and every period. It uses from 0 to 7 in this data, 0 means the lowest price and 7 means the highest price ever appears in that period. In other words, the stage depends on the data in which period.
+Assign a stage (0–7) to each price based on its position within the period.
 
-3.  Train data with LSTM model to predict the stage.
+Stage 0 = lowest price in that period
 
-4.  The action generate depends on stage level. If stage < 3 then will buy else if stage > 4 then will sell.
+Stage 7 = highest price in that period
+
+Stages are relative to the price range within each period.
+
+Train an LSTM model to predict the price stage.
+
+Generate actions based on the predicted stage:
+
+Buy if stage < 3
+
+Sell if stage > 4
 
 ```
 

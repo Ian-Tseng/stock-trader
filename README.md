@@ -1,41 +1,53 @@
 # Stock Trader
+A Python-based trading strategy that leverages LSTM modeling to identify price stages and guide buy/sell decisions based on seasonal patterns.
+
 
 
 ## Prerequisite
 - Python 3.10
 
-### Install Dependency
-```
-requirements.txt
-```
+### Installation
+Clone the repository and navigate to the project directory.
 
-### Start Virtual Environment
+Install dependencies:
 ```
 pip install -r requirements.txt
+```
+
+### Running the Model
+```
 python trader.py --training training_data.csv --testing testing_data.csv
 ```
 
 
 
-### Idea 
+### Strategy Overview 
 ```
-Identify seasonal price deltas that are greater than the overall dataset’s price delta, and split the data into different life periods accordingly.
+This strategy identifies and leverages seasonal price behavior patterns:
 
-Assign a stage (0–7) to each price based on its position within the period.
+Period Segmentation:
+Split the dataset into periods where local price deltas exceed the overall delta.
 
-Stage 0 = lowest price in that period
+Stage Assignment:
+Assign each price a stage from 0 to 7 within its period:
 
-Stage 7 = highest price in that period
+Stage 0: Lowest price in the period
 
-Stages are relative to the price range within each period.
+Stage 7: Highest price in the period
 
-Train an LSTM model to predict the price stage.
+Other stages are linearly interpolated between these extremes
 
-Generate actions based on the predicted stage:
+Model Training:
+Train an LSTM model to predict the stage of the next price point.
 
-Buy if stage < 3
+Decision Rules:
 
-Sell if stage > 4
+Buy if predicted stage < 3
+
+Sell if predicted stage > 4
+
+Hold otherwise
+
 
 ```
 
